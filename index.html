@@ -15,7 +15,7 @@
 body, html { height: 100%; }
 body { background-color: #000000; color: #ffffff; }
 h1 { font-family: "Playfair Display"; font-size: 30px; padding: 10px 0px; margin: 0px; }
-.field-box { border: 2px solid #1e0f0f; float: left; height: 629px; width: 1029px;}
+.field-box { border: 2px solid #1e0f0f; float: left; height: 600px; width: 1000px;}
 .field { position: relative; width: 1024px; height: 640px; }
 .field .tile { position: absolute; width: 50px; height: 50px; background-size: 100%; background-image: url(images/tile-.png); z-index: 5; }
 .field .tileW { background-image: url(images/tile-W.png); }
@@ -40,8 +40,107 @@ h1 { font-family: "Playfair Display"; font-size: 30px; padding: 10px 0px; margin
 		<div class="inventory-box"><div class="inventory"></div></div>
 
 		<script>
+			class Room {
+				constructor(x, y, width, height) {
+					this.x = x;
+					this.y = y;
+					this.width = width;
+					this.height = height;
+				}
+			}
+
+			class Tunnel {
+				constructor(orientation, pos) {
+					this.orientation = orientation; // 'vertical' или 'horizontal'
+					this.pos = pos; // x для вертикального, y для горизонтального
+				}
+			}
+
 			class Game {
+				createRooms(tiles) {
+					const cols = tiles[0].length;
+					const rows = tiles.length;
+					const roomCount = Math.floor(Math.random() * 6) + 5; // 5-10 комнат
+					this.rooms = [];
+					for (let i = 0; i < roomCount; i++) {
+						const roomWidth = Math.floor(Math.random() * 6) + 3; // 3-8
+						const roomHeight = Math.floor(Math.random() * 6) + 3; // 3-8
+						const roomX = Math.floor(Math.random() * (cols - roomWidth));
+						const roomY = Math.floor(Math.random() * (rows - roomHeight));
+						const room = new Room(roomX, roomY, roomWidth, roomHeight);
+						this.rooms.push(room);
+						for (let y = roomY; y < roomY + roomHeight; y++) {
+							for (let x = roomX; x < roomX + roomWidth; x++) {
+								tiles[y][x].className = 'tile'; // пол
+							}
+						}
+					}
+				}
+
+				createVerticalTunnels(tiles) {
+					const cols = tiles[0].length;
+					const rows = tiles.length;
+					const tonelVertCound = Math.floor(Math.random() * 3) + 3; // 3-5 вертикальных тоннеля
+					this.verticalTunnels = [];
+					for (let i = 0; i < tonelVertCound; i++) {
+						const x = Math.floor(Math.random() * cols);
+						const tunnel = new Tunnel('vertical', x);
+						this.verticalTunnels.push(tunnel);
+						for (let y = 0; y < rows; y++) {
+							tiles[y][x].className = 'tile'; // пол
+						}
+					}
+				}
+
+				createHorizontalTunnels(tiles) {
+					const cols = tiles[0].length;
+					const rows = tiles.length;
+					const tonelHorizCound = Math.floor(Math.random() * 3) + 3; // 3-5 горизонтальных тоннеля
+					this.horizontalTunnels = [];
+					for (let i = 0; i < tonelHorizCound; i++) {
+						const y = Math.floor(Math.random() * rows);
+						const tunnel = new Tunnel('horizontal', y);
+						this.horizontalTunnels.push(tunnel);
+						for (let x = 0; x < cols; x++) {
+							tiles[y][x].className = 'tile'; // пол
+						}
+					}
+				}
+
+				placeItems(tiles) {
+					const cols = tiles[0].length;
+					const rows = tiles.length;
+					const emptyTiles = [];
+					for (let y = 0; y < rows; y++) {
+						for (let x = 0; x < cols; x++) {
+							if (tiles[y][x].className === 'tile') {
+								emptyTiles.push({x, y});
+							}
+						}
+					}
+
+					function randomTiles(count) {
+						const result = [];
+						for (let i = 0; i < count && emptyTiles.length > 0; i++) {
+							const idx = Math.floor(Math.random() * emptyTiles.length);
+							result.push(emptyTiles[idx]);
+							emptyTiles.splice(idx, 1);
+						}
+						return result;
+					}
+
+					// Мечи
+					randomTiles(2).forEach(pos => {
+						tiles[pos.y][pos.x].className = 'tile tileSW';
+					});
+					// Зелья здоровья
+					randomTiles(10).forEach(pos => {
+						tiles[pos.y][pos.x].className = 'tile tileHP';
+					});
+				}
+
 				init() {
+
 					const field = document.querySelector('.field');
 					const cols = 40;
 					const rows = 24;
@@ -56,24 +155,20 @@ h1 { font-family: "Playfair Display"; font-size: 30px; padding: 10px 0px; margin
 							tile.className = 'tile tileW';
 							tile.style.left = (x * tileSize) + 'px';
 							tile.style.top = (y * tileSize) + 'px';
+							tile.style.width = tileSize + 'px';
+							tile.style.height = tileSize + 'px';
 							field.appendChild(tile);
 							tiles[y][x] = tile;
 						}
 					}
 
-					// Генерация комнат
-					const roomCount = Math.floor(Math.random() * 6) + 5; // 5-10 комнат
-					for (let i = 0; i < roomCount; i++) {
-						const roomWidth = Math.floor(Math.random() * 6) + 3; // 3-8
-						const roomHeight = Math.floor(Math.random() * 6) + 3; // 3-8
-						const roomX = Math.floor(Math.random() * (cols - roomWidth));
-						const roomY = Math.floor(Math.random() * (rows - roomHeight));
-						for (let y = roomY; y < roomY + roomHeight; y++) {
-							for (let x = roomX; x < roomX + roomWidth; x++) {
-								tiles[y][x].className = 'tile'; // пол
-							}
-						}
-					}
+					// Создание комнат и тоннелей
+					this.createRooms(tiles);
+					this.createVerticalTunnels(tiles);
+					this.createHorizontalTunnels(tiles);
+					this.placeItems(tiles);
+
+					
 				}
 			}
 
