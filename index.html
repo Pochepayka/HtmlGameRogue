@@ -46,13 +46,32 @@ h1 { font-family: "Playfair Display"; font-size: 30px; padding: 10px 0px; margin
 					const cols = 40;
 					const rows = 24;
 					const tileSize = 25;
+
+					// Массив для хранения ссылок на тайлы
+					const tiles = [];
 					for (let y = 0; y < rows; y++) {
+						tiles[y] = [];
 						for (let x = 0; x < cols; x++) {
 							const tile = document.createElement('div');
 							tile.className = 'tile tileW';
 							tile.style.left = (x * tileSize) + 'px';
 							tile.style.top = (y * tileSize) + 'px';
 							field.appendChild(tile);
+							tiles[y][x] = tile;
+						}
+					}
+
+					// Генерация комнат
+					const roomCount = Math.floor(Math.random() * 6) + 5; // 5-10 комнат
+					for (let i = 0; i < roomCount; i++) {
+						const roomWidth = Math.floor(Math.random() * 6) + 3; // 3-8
+						const roomHeight = Math.floor(Math.random() * 6) + 3; // 3-8
+						const roomX = Math.floor(Math.random() * (cols - roomWidth));
+						const roomY = Math.floor(Math.random() * (rows - roomHeight));
+						for (let y = roomY; y < roomY + roomHeight; y++) {
+							for (let x = roomX; x < roomX + roomWidth; x++) {
+								tiles[y][x].className = 'tile'; // пол
+							}
 						}
 					}
 				}
