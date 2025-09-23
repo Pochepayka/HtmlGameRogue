@@ -15,7 +15,7 @@
 body, html { height: 100%; }
 body { background-color: #000000; color: #ffffff; }
 h1 { font-family: "Playfair Display"; font-size: 30px; padding: 10px 0px; margin: 0px; }
-.field-box { border: 2px solid #d0d0d0; float: left; }
+.field-box { border: 2px solid #1e0f0f; float: left; }
 .field { position: relative; width: 1024px; height: 640px; }
 .field .tile { position: absolute; width: 50px; height: 50px; background-size: 100%; background-image: url(images/tile-.png); z-index: 5; }
 .field .tileW { background-image: url(images/tile-W.png); }
@@ -32,12 +32,31 @@ h1 { font-family: "Playfair Display"; font-size: 30px; padding: 10px 0px; margin
 	</head>
 	<body>
 		<h1>Игровое поле</h1>
-		<div class="field-box"><div class="field"></div></div>
+		<div class="field-box">
+			<div class="field"></div>
+		</div>
 		<div class="cl"></div>
-		<!--h1>Инвентарь</h1>
-		<div class="inventory-box"><div class="inventory"></div></div-->
+		<h1>Инвентарь</h1>
+		<div class="inventory-box"><div class="inventory"></div></div>
 
 		<script>
+			class Game {
+				init() {
+					const field = document.querySelector('.field');
+					const cols = 40;
+					const rows = 24;
+					const tileSize = 25;
+					for (let y = 0; y < rows; y++) {
+						for (let x = 0; x < cols; x++) {
+							const tile = document.createElement('div');
+							tile.className = 'tile';
+							tile.style.left = (x * tileSize) + 'px';
+							tile.style.top = (y * tileSize) + 'px';
+							field.appendChild(tile);
+						}
+					}
+				}
+			}
 
 			var game=new Game();
 			game.init();
