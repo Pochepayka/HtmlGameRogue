@@ -756,6 +756,7 @@
 					this._keydownHandler = (e) => {
 						if (!this.hero || this.heartCount <= 0 || !this.hero.isAlive || this.victory) return;
 						let dx = 0, dy = 0;
+						e.preventDefault();
 						if (e.code === 'KeyW') {
 							dy = -1;
 							this.moveHero(dx, dy);
