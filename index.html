@@ -10,42 +10,140 @@
 		<link href="https://fonts.googleapis.com/css?family=Playfair+Display:400,400i|Tinos:400,400i&amp;subset=cyrillic" rel="stylesheet">
 		<script type="text/javascript" src="/shared/3rdparty/jquery/jquery.js" language="javascript1.1"></script>
 		<script src="index.js"></script>
-<style>
-* { box-sizing: border-box; }
-body, html { height: 100%; }
-body { background-color: #000000; color: #ffffff; }
-h1 { font-family: "Playfair Display"; font-size: 30px; padding: 10px 0px; margin: 0px; }
-.field-box { border: 2px solid #1e0f0f; float: left; height: 600px; width: 1000px;}
-.field { position: relative; width: 1024px; height: 640px; }
-.field .tile { position: absolute; width: 50px; height: 50px; background-size: 100%; background-image: url(images/tile-.png); z-index: 5; }
-.field .tileW { background-image: url(images/tile-W.png); }
-.field .tileE { background-image: url(images/tile-E.png); z-index: 10; }
-.field .tileP { background-image: url(images/tile-P.png); z-index: 10; }
-.field .tileHP { background-image: url(images/tile-HP.png); z-index: 9; }
-.field .tileSW { background-image: url(images/tile-SW.png); z-index: 9; }
-.field .tile .health { background-color: #ff0000; z-index: 11; position: absolute; left: 0px; top: 0px; height: 3px; }
-.field .tileP .health { background-color: #00ff00; z-index: 11; position: absolute; left: 0px; top: 0px; height: 3px; }
-.inventory-box { border: 2px solid #d0d0d0; float: left; }
-.inventory { position: relative; width: 800px; height: 32px; }
-.cl { clear: both; display: block; }
-</style>
+		<style>
+			* { box-sizing: border-box; }
+			body, html { height: 100%; }
+			body { background-color: #000000; color: #ffffff; }
+			h1 { font-family: "Playfair Display"; font-size: 30px; padding: 10px 0px; margin: 0px; }
+			.field-box { border: 2px solid #1e0f0f; float: left; height: 604px; width: 1004px;}
+			.field { position: relative; width: 1000px; height: 600px; }
+			.tile { position: absolute; width: 50px; height: 50px; background-size: 100%; background-image: url(images/tile-.png); z-index: 5; }
+			.tileW { background-image: url(images/tile-W.png); }
+			.tileE { background-image: url(images/tile-E.png); z-index: 10; }
+			.tileP { background-image: url(images/tile-P.png); z-index: 10; }
+			.tileHP { background-image: url(images/tile-HP.png); z-index: 9; }
+			.tileSW { background-image: url(images/tile-SW.png); z-index: 9; }
+			.tilePORTAL { filter: brightness(0.7) sepia(0.3) hue-rotate(-100deg) saturate(6) contrast(1.2); }
+			.tile .health { background-color: #ff0000; z-index: 11; position: absolute; left: 0px; top: 0px; height: 3px; }
+			.tileP .health { background-color: #00ff00; z-index: 11; position: absolute; left: 0px; top: 0px; height: 3px; }
+			.inventory-box { border: 2px solid #d0d0d0; float: left; }
+			.inventory { position: relative; width: 420px; height: 30px; }
+			.cl { clear: both; display: block; }
+			.tileP.damage {
+				background-color: #ff2222;
+				box-shadow: 0 0 20px 8px #ff2222;
+				transition: background-color 0.1s;
+				filter: brightness(1.2) sepia(1) hue-rotate(-20deg) saturate(8) contrast(1.2);
+			}
+			.tile.hit {
+				background-color: #ffff22;
+				box-shadow: 0 0 20px 8px #ffff22;
+				transition: background-color 0.1s;
+				filter: brightness(1.2) sepia(1) hue-rotate(-20deg) saturate(8) contrast(1.2);
+			}
+			.tileP.power {	
+				box-shadow: 0 0 20px 8px #22ff22;
+				transition: background-color 0.1s;
+				filter: brightness(1.2) sepia(1) hue-rotate(-100deg) saturate(8) contrast(1.2);
+			}
+			.tileP.hil {
+				box-shadow: 0 0 20px 8px #22aaff;
+				transition: background-color 0.1s;
+				filter: brightness(1.2) sepia(1) hue-rotate(100deg) saturate(8) contrast(1.2);
+			}
+			.enemy-info-box {
+				border:2px solid #d0d0d0; 
+				float:left; 
+				margin-left:20px; 
+				width:250px; 
+				min-height:32px; 
+				background:#111; 
+				color:#fff; 
+				padding:10px;
+			}
+			.enemy-info {
+				display: flex;
+				flex-wrap: wrap;
+				gap: 8px;
+			}
+			.enemy-info > div {
+				min-width: 210px;
+				max-width: 210px;
+				background: #222;
+				border-radius: 6px;
+				padding: 6px 10px;
+				margin: 0;
+				box-sizing: border-box;
+				font-size: 16px;
+			}
+
+		</style>
 	</head>
+
 	<body>
-		<h1>Игровое поле</h1>
-		<div class="field-box">
-			<div class="field"></div>
+		<div id="game-interfase">
+			<div>
+				<div style="float:left;">
+					<h1 id="levelPanel">Игровое поле</h1>
+					<div class="field-box">
+						<div class="field"></div>
+					</div>
+				</div>
+
+				<div style="float: left;">
+					<h1 style="margin-left: 20px;">Враги</h1>
+					<div class="enemy-info-box">
+						<div class="enemy-info"></div>
+					</div>
+				</div>		
+			</div>
+
+			<div class="cl"></div>
+
+			<h1>Инвентарь</h1>
+			<div class="inventory-box">
+				<div class="inventory"></div>
+			</div>
+			
+			
 		</div>
-		<div class="cl"></div>
-		<h1>Инвентарь</h1>
-		<div class="inventory-box"><div class="inventory"></div></div>
+		<div id="game-over" style="display:none; position:fixed; left:0; top:0; width:100%; overflow-y: auto; height:100%; background:rgba(0,0,0,0.8); z-index:100; color:#fff; text-align:center; font-size:32px; padding-top:200px;">
+			<p id="game-over-message">Вы проиграли!</p>
+			<button id="restart-btn" style="font-size:24px; padding:10px 30px;">Перезапуск</button>
+		</div>
+
+		<div id="game-rules" style="display:block; position:fixed; left:0; top:0; width:100%; overflow-y: auto; height:100%; background:rgba(0,0,0,0.95); z-index:200; color:#fff; text-align:center; font-size:22px; padding-top:10px;">
+			<h2>Правила игры</h2>
+			<p>
+				Вы играете за героя, который должен выжить в подземелье.<br>
+				Ваша задача — найти портал (фиолетовая клетка) и попасть в него.<br>
+				На пути вам встретятся враги, зелья здоровья и мечи.<br>
+				Враги атакуют, если находятся рядом (в радиусе 1го блока). <br>
+				Их сила и здоровье зависит от игрового уровня и пишется справа. <br>
+				У вас есть максимем 10 жизней. Подобранное зелье здоровья восстанавливает одну потерянную жизнь. <br>
+				Подобранные мечи увеличивают силу атаки. В начате твоя сила удара равна двум мечам.<br>
+				Портал — единственный путь к победе. Если здоровье закончится, вы проиграете.<br>
+			</p>
+			<h3>Управление</h3>
+			<p>
+				<kbd>W</kbd> — вверх<br>
+				<kbd>S</kbd> — вниз<br>
+				<kbd>A</kbd> — влево<br>
+				<kbd>D</kbd> — вправо<br>
+				<kbd>Пробел</kbd> — атака по врагам вокруг<br>
+			</p>
+			<button id="start-game-btn" style="font-size:24px; padding:10px 30px; margin-top:30px;">Начать игру</button>
+		</div>
 
 		<script>
+		// --- Классы Room, Tunnel, Cell, Person, Hero, Enemy, Item, Sword, Tablet ---
 			class Room {
 				constructor(x, y, width, height) {
 					this.x = x;
 					this.y = y;
 					this.width = width;
 					this.height = height;
+					this.wisited = false; // для проверки связности комнат
 				}
 			}
 
@@ -53,72 +151,274 @@ h1 { font-family: "Playfair Display"; font-size: 30px; padding: 10px 0px; margin
 				constructor(orientation, pos) {
 					this.orientation = orientation; // 'vertical' или 'horizontal'
 					this.pos = pos; // x для вертикального, y для горизонтального
+					this.isPassage = false; 
 				}
 			}
 
+			class Cell {
+				constructor(x, y) {
+					this.x = x;
+					this.y = y;
+				}
+
+				get position() {
+					return {x: this.x, y: this.y};
+				}
+
+			
+			}
+
+			class Person extends Cell {
+				constructor(x, y) {
+					super(x, y);
+					this.health = 10; 
+					this.attack = 1; 	
+				}
+
+				setPosition(x, y) {
+					this.x = x;
+					this.y = y;
+				}
+
+				get isAlive() {
+					return this.health > 0;
+				}
+
+				takeDamage(amount) {
+					this.health -= amount;
+					if (this.health < 0) this.health = 0;
+				}
+				
+			}
+
+			class Hero extends Person {
+				constructor(x, y) {
+					super(x, y);
+					this.attack = 2; 
+				}
+
+				heal() {
+					this.health += 1;
+					if (this.health > 10) this.health = 10;
+				}
+
+				strongAttack() {
+					this.attack += 1;
+					if (this.attack > 5) this.attack = 5;
+				} 
+			}
+
+			class Enemy extends Person {
+				constructor(x, y,attack,health) {
+					super(x, y);
+					this.attack = attack;
+					this.health = health;
+				}
+			}
+
+			class Item extends Cell {
+				constructor(x, y) {
+					super(x, y);
+					this.picked = false;
+				}
+
+				pick() {
+					this.picked = true;
+				}
+
+				get isPicked() {
+					return this.picked;
+				}
+			}
+
+			class Sword extends Item {
+				constructor(x, y) {
+					super(x, y);
+				}
+			}
+			
+			class Tablet extends Item {
+				constructor(x, y) {
+					super(x, y);
+				}
+			}
+
+			class Portal extends Cell {
+				constructor(x, y) {
+					super(x, y);
+				}
+			}
+
+
+
 			class Game {
-				createRooms(tiles) {
-					const cols = tiles[0].length;
-					const rows = tiles.length;
-					const roomCount = Math.floor(Math.random() * 6) + 5; // 5-10 комнат
+				constructor() {
+					this.cols = 40;
+					this.rows = 24;
+					this.tileSize = 25;
+					this.tiles = []; // двумерный массив состояния тайлов: { type: 'W'|'E'|'P'|'HP'|'SW'|null efect: null | 'damage | 'hil' | 'power' | 'hit'}
+					this.items = [];
+					this.hero = null;
+					this.enemies = [];
+					this.heartCount = 10;
+					this.swordCount = 2;
+					this.level = 1;
+					this.maxLevel = 10;
+					this.dificulty = [[1,10,1000],[2,10,1000],[2,10,500],[2,15,500],[2,15,300],[3,15,300],[3,15,200],[3,15,200],[3,15,100],[3,20,100] ];
+					this.victory = false;
+				}
+
+				createEmptyTiles() {
+					this.tiles = [];
+					for (let y = 0; y < this.rows; y++) {
+						this.tiles[y] = [];
+						for (let x = 0; x < this.cols; x++) {
+							this.tiles[y][x] = { type: 'W',efect: null }; // W - стена
+						}
+					}
+				}
+
+				createRooms() {
+					const roomCount = Math.floor(Math.random() * 6) + 5;
 					this.rooms = [];
 					for (let i = 0; i < roomCount; i++) {
-						const roomWidth = Math.floor(Math.random() * 6) + 3; // 3-8
-						const roomHeight = Math.floor(Math.random() * 6) + 3; // 3-8
-						const roomX = Math.floor(Math.random() * (cols - roomWidth));
-						const roomY = Math.floor(Math.random() * (rows - roomHeight));
+						const roomWidth = Math.floor(Math.random() * 6) + 3;
+						const roomHeight = Math.floor(Math.random() * 6) + 3;
+						const roomX = Math.floor(Math.random() * (this.cols - roomWidth));
+						const roomY = Math.floor(Math.random() * (this.rows - roomHeight));
 						const room = new Room(roomX, roomY, roomWidth, roomHeight);
 						this.rooms.push(room);
 						for (let y = roomY; y < roomY + roomHeight; y++) {
 							for (let x = roomX; x < roomX + roomWidth; x++) {
-								tiles[y][x].className = 'tile'; // пол
+								this.tiles[y][x].type = null; // пол
+								this.tiles[y][x].efect = null; // сброс эффектов
 							}
 						}
 					}
 				}
 
-				createVerticalTunnels(tiles) {
-					const cols = tiles[0].length;
-					const rows = tiles.length;
-					const tonelVertCound = Math.floor(Math.random() * 3) + 3; // 3-5 вертикальных тоннеля
+				createVerticalTunnels() {
+					const tonelVertCound = Math.floor(Math.random() * 3) + 3;
 					this.verticalTunnels = [];
 					for (let i = 0; i < tonelVertCound; i++) {
-						const x = Math.floor(Math.random() * cols);
+						const x = Math.floor(Math.random() * this.cols);
 						const tunnel = new Tunnel('vertical', x);
 						this.verticalTunnels.push(tunnel);
-						for (let y = 0; y < rows; y++) {
-							tiles[y][x].className = 'tile'; // пол
+						for (let y = 0; y < this.rows; y++) {
+							this.tiles[y][x].type = null;
+							this.tiles[y][x].efect = null;
 						}
 					}
 				}
 
-				createHorizontalTunnels(tiles) {
-					const cols = tiles[0].length;
-					const rows = tiles.length;
-					const tonelHorizCound = Math.floor(Math.random() * 3) + 3; // 3-5 горизонтальных тоннеля
+				createHorizontalTunnels() {
+					const tonelHorizCound = Math.floor(Math.random() * 3) + 3;
 					this.horizontalTunnels = [];
 					for (let i = 0; i < tonelHorizCound; i++) {
-						const y = Math.floor(Math.random() * rows);
+						const y = Math.floor(Math.random() * this.rows);
 						const tunnel = new Tunnel('horizontal', y);
 						this.horizontalTunnels.push(tunnel);
-						for (let x = 0; x < cols; x++) {
-							tiles[y][x].className = 'tile'; // пол
+						for (let x = 0; x < this.cols; x++) {
+							this.tiles[y][x].type = null;
+							this.tiles[y][x].efect = null;
 						}
 					}
 				}
 
-				placeItems(tiles) {
-					const cols = tiles[0].length;
-					const rows = tiles.length;
+				checkConnectedRooms() {
+					// Сброс флага посещения
+					this.rooms.forEach(room => room.wisited = false);
+
+					this.allTonel = [...this.verticalTunnels, ...this.horizontalTunnels];
+
+					this.rooms.forEach(room => {
+						for (let i = 0; i < this.allTonel.length; i++) {
+							const tunnel = this.allTonel[i];
+							if (tunnel.orientation === 'vertical') {
+								if (
+									tunnel.pos >= room.x &&
+									tunnel.pos < room.x + room.width &&
+									room.y < this.rows &&
+									room.y + room.height > 0
+								) {
+									room.wisited = true;
+									tunnel.isPassage = true;
+									break; 
+								}
+							} else { // horizontal
+								if (
+									tunnel.pos >= room.y &&
+									tunnel.pos < room.y + room.height &&
+									room.x < this.cols &&
+									room.x + room.width > 0
+								) {
+									room.wisited = true;
+									tunnel.isPassage = true;
+									break;
+								}
+							}
+						}
+					});
+
+					// Проверка, все ли комнаты были посещены
+					return this.rooms.every(room => room.wisited);
+				}
+
+				connectRooms() {
+					// Пока есть непосещённые комнаты и есть туннели, которые не соединяют комнаты
+					let unvisitedRooms = this.rooms.filter(room => !room.wisited);
+					let freeTunnels = [...this.verticalTunnels, ...this.horizontalTunnels].filter(tunnel => !tunnel.isPassage);
+
+					while (unvisitedRooms.length > 0 && freeTunnels.length > 0) {
+						// Выбираем случайную непосещённую комнату
+						const room = unvisitedRooms[Math.floor(Math.random() * unvisitedRooms.length)];
+						// Выбираем случайный свободный туннель
+						const tunnel = freeTunnels[Math.floor(Math.random() * freeTunnels.length)];
+
+						if (tunnel.orientation === 'vertical') {
+							// Перемещаем вертикальный туннель на случайную x внутри комнаты
+							const newX = room.x + Math.floor(Math.random() * room.width);
+							tunnel.pos = newX;
+							// Прорисовываем туннель на поле
+							for (let y = 0; y < this.rows; y++) {
+								this.tiles[y][newX].type = null;
+							}
+						} else {
+							// Перемещаем горизонтальный туннель на случайную y внутри комнаты
+							const newY = room.y + Math.floor(Math.random() * room.height);
+							tunnel.pos = newY;
+							// Прорисовываем туннель на поле
+							for (let x = 0; x < this.cols; x++) {
+								this.tiles[newY][x].type = null;
+							}
+						}
+						// Отмечаем комнату как посещённую и туннель как проходящий
+						room.wisited = true;
+						tunnel.isPassage = true;
+
+						// Обновляем списки для следующей итерации
+						unvisitedRooms = this.rooms.filter(room => !room.wisited);
+						freeTunnels = [...this.verticalTunnels, ...this.horizontalTunnels].filter(tunnel => !tunnel.isPassage);
+					}
+				}
+
+				
+
+				
+
+				placeItems() {
 					const emptyTiles = [];
-					for (let y = 0; y < rows; y++) {
-						for (let x = 0; x < cols; x++) {
-							if (tiles[y][x].className === 'tile') {
+					this.items = [];
+					this.hero = null;
+					this.enemies = [];
+					this.portal = null;
+					for (let y = 0; y < this.rows; y++) {
+						for (let x = 0; x < this.cols; x++) {
+							if (this.tiles[y][x].type === null) {
 								emptyTiles.push({x, y});
 							}
 						}
 					}
-
 					function randomTiles(count) {
 						const result = [];
 						for (let i = 0; i < count && emptyTiles.length > 0; i++) {
@@ -128,52 +428,385 @@ h1 { font-family: "Playfair Display"; font-size: 30px; padding: 10px 0px; margin
 						}
 						return result;
 					}
-
 					// Мечи
 					randomTiles(2).forEach(pos => {
-						tiles[pos.y][pos.x].className = 'tile tileSW';
+						this.tiles[pos.y][pos.x].type = 'SW';
+						const sword = new Sword(pos.x, pos.y);
+						this.items.push(sword);
 					});
 					// Зелья здоровья
 					randomTiles(10).forEach(pos => {
-						tiles[pos.y][pos.x].className = 'tile tileHP';
+						this.tiles[pos.y][pos.x].type = 'HP';
+						const tablet = new Tablet(pos.x, pos.y);
+						this.items.push(tablet);
+					});
+					// Герой
+					randomTiles(1).forEach(pos => {
+						this.tiles[pos.y][pos.x].type = 'P';
+						const hero = new Hero(pos.x, pos.y);
+						this.hero = hero;
+					});
+					// Враги
+					randomTiles(10).forEach(pos => {
+						this.tiles[pos.y][pos.x].type = 'E';
+						const enemy = new Enemy(pos.x, pos.y,
+						this.dificulty[this.level-1][0], this.dificulty[this.level-1][1]);
+						this.enemies.push(enemy);
+					});
+					// Портал
+					randomTiles(1).forEach(pos => {
+						this.tiles[pos.y][pos.x].type = 'PORTAL';
+						this.portal = new Portal(pos.x, pos.y);
 					});
 				}
 
-				init() {
+				attackByHero() {
+					const directions = [
+						{dx: -1, dy: 0}, {dx: 1, dy: 0}, {dx: 0, dy: -1}, {dx: 0, dy: 1},
+						{dx: -1, dy: -1}, {dx: 1, dy: -1}, {dx: -1, dy: 1}, {dx: 1, dy: 1}
+					];
+					for (const dir of directions) {
+						if (this.hero.x + dir.dx >= 0 && this.hero.x + dir.dx < this.cols &&
+						this.hero.y + dir.dy >= 0 && this.hero.y + dir.dy < this.rows)
+						this.tiles[this.hero.y + dir.dy][this.hero.x + dir.dx].efect = "hit"
 
-					const field = document.querySelector('.field');
-					const cols = 40;
-					const rows = 24;
-					const tileSize = 25;
+						this.enemies.forEach(enemy => {
 
-					// Массив для хранения ссылок на тайлы
-					const tiles = [];
-					for (let y = 0; y < rows; y++) {
-						tiles[y] = [];
-						for (let x = 0; x < cols; x++) {
-							const tile = document.createElement('div');
-							tile.className = 'tile tileW';
-							tile.style.left = (x * tileSize) + 'px';
-							tile.style.top = (y * tileSize) + 'px';
-							tile.style.width = tileSize + 'px';
-							tile.style.height = tileSize + 'px';
-							field.appendChild(tile);
-							tiles[y][x] = tile;
+							if (
+								enemy.x === this.hero.x + dir.dx &&
+								enemy.y === this.hero.y + dir.dy &&
+								enemy.isAlive
+							) {
+								enemy.takeDamage(this.hero.attack);
+								if (!enemy.isAlive) {
+									this.tiles[enemy.y][enemy.x].type = null;
+								}
+							}
+						})
+					};
+				}
+
+				moveHero(dx, dy) {
+					const newX = this.hero.x + dx;
+					const newY = this.hero.y + dy;
+					if (
+						newX >= 0 && newX < this.cols &&
+						newY >= 0 && newY < this.rows &&
+						(this.tiles[newY][newX].type === null ||
+							this.tiles[newY][newX].type === 'HP' ||
+							this.tiles[newY][newX].type === 'SW' ||
+							this.tiles[newY][newX].type === 'PORTAL')
+					) {
+						// Проверяем зелье здоровья
+						if (this.tiles[newY][newX].type === 'HP') {
+							this.hero.heal();
+							this.items = this.items.filter(item => !(item instanceof Tablet && item.x === newX && item.y === newY));
+							if (this.hero.health != this.heartCount){
+								this.tiles[newY][newX].efect = 'hil';
+								this.heartCount = this.hero.health
+							}
+							  
+						}
+						// Проверяем меч
+						if (this.tiles[newY][newX].type === 'SW') {
+							this.hero.strongAttack();
+							this.items = this.items.filter(item => !(item instanceof Sword && item.x === newX && item.y === newY));
+							this.swordCount = this.hero.attack;
+							this.tiles[newY][newX].efect = 'power';
+						}
+						// Победа при попадании на портал
+						if (this.tiles[newY][newX].type === 'PORTAL') {
+							this.tiles[this.hero.y][this.hero.x].type = null;
+							this.tiles[newY][newX].type = 'P';
+							this.hero.setPosition(newX, newY);
+							this.victory = true;
+							this.render();
+							return true;
+						}
+						this.tiles[this.hero.y][this.hero.x].type = null;
+						this.tiles[this.hero.y][this.hero.x].efect = null;
+						
+						this.hero.setPosition(newX, newY);
+						this.tiles[newY][newX].type = 'P';
+						return true;
+					}
+					return false;
+				}
+
+				attackByEnemy() {
+					const directions = [
+						{dx: -1, dy: 0}, {dx: 1, dy: 0}, {dx: 0, dy: -1}, {dx: 0, dy: 1},
+						{dx: -1, dy: -1}, {dx: 1, dy: -1}, {dx: -1, dy: 1}, {dx: 1, dy: 1}
+					];
+					let damaged = false;
+					this.enemies.forEach(enemy => {
+						for (const dir of directions) {
+							if (
+								enemy.x === this.hero.x + dir.dx &&
+								enemy.y === this.hero.y + dir.dy &&
+								enemy.isAlive &&
+								this.hero.isAlive
+							) {
+								this.hero.takeDamage(enemy.attack);
+								this.heartCount = this.hero.health;
+								damaged = true;
+							}
+						}
+					});
+					if (damaged) {
+						// Визуализация урона
+						if (this.hero) {
+							this.tiles[this.hero.y][this.hero.x].efect = 'damage';//classList.add('damage');
+							//this.render();
+							// setTimeout(() => {
+							// 	this.tiles[damagedX][damagedY].efect = null;
+							// }, 100);
 						}
 					}
+				}
 
-					// Создание комнат и тоннелей
-					this.createRooms(tiles);
-					this.createVerticalTunnels(tiles);
-					this.createHorizontalTunnels(tiles);
-					this.placeItems(tiles);
+				moveEnemy() {
+					this.enemies.forEach(enemy => {
+						if (!enemy.isAlive) return;
+						const moveDirs = [
+							{dx: 0, dy: 0},
+							{dx: -1, dy: 0}, {dx: 1, dy: 0},
+							{dx: 0, dy: -1}, {dx: 0, dy: 1}
+						];
+						const dir = moveDirs[Math.floor(Math.random() * moveDirs.length)];
+						const ex = enemy.x + dir.dx;
+						const ey = enemy.y + dir.dy;
+						if (
+							ex >= 0 && ex < this.cols &&
+							ey >= 0 && ey < this.rows &&
+							this.tiles[ey][ex].type === null
+						) {
+							this.tiles[enemy.y][enemy.x].type = null;
+							enemy.setPosition(ex, ey);
+							this.tiles[ey][ex].type = 'E';
+						}
+					});
+				}
 
+				render() {
+					// Рендер поля
+
+					const fieldDiv = document.querySelector('.field');
+					fieldDiv.innerHTML = '';
+					for (let y = 0; y < this.rows; y++) {
+						for (let x = 0; x < this.cols; x++) {
+							const tileDiv = document.createElement('div');
+							let className = 'tile';
+							switch (this.tiles[y][x].type) {
+								case 'W': className += ' tileW'; break;
+								case 'E': className += ' tileE'; break;
+								case 'P': className += ' tileP'; break;
+								case 'HP': className += ' tileHP'; break;
+								case 'SW': className += ' tileSW'; break;
+								case 'PORTAL': className += ' tilePORTAL'; break;
+							}
+
+							switch (this.tiles[y][x].efect) {
+								case 'damage': className += ' damage'; break;
+								case 'hit': className += ' hit'; break;
+								case 'hil': className += ' hil'; break;
+								case 'power': className += ' power'; break;
+							}
+
+							this.tiles[y][x].efect = null;
+							tileDiv.className = className;
+							tileDiv.style.left = (x * this.tileSize) + 'px';
+							tileDiv.style.top = (y * this.tileSize) + 'px';
+							tileDiv.style.width = this.tileSize + 'px';
+							tileDiv.style.height = this.tileSize + 'px';
+							fieldDiv.appendChild(tileDiv);
+						}
+					}
+					// Рендер инвентаря
+					const inventoryDiv = document.querySelector('.inventory');
+					inventoryDiv.innerHTML = '';
+					for (let i = 0; i < this.heartCount; i++) {
+						const heart = document.createElement('div');
+						heart.className = 'tile tileHP heart';
+						heart.style.width = '30px';
+						heart.style.height = '30px';
+						heart.style.left = (i * 30) + 'px';
+						heart.style.top = '0px';
+						inventoryDiv.appendChild(heart);
+					}
+					for (let i = 0; i < this.swordCount; i++) {
+						const sword = document.createElement('div');
+						sword.className = 'tile tileSW sword';
+						sword.style.width = '30px';
+						sword.style.height = '30px';
+						sword.style.left = ((this.heartCount + i) * 30) + 'px';
+						sword.style.top = '0px';
+						inventoryDiv.appendChild(sword);
+					}
+
+					// информация о врагах
+					const enemyInfoDiv = document.querySelector('.enemy-info');
+					enemyInfoDiv.innerHTML = '';
+					this.enemies.forEach((enemy, idx) => {
+						if (!enemy.isAlive) return;
+						const info = document.createElement('div');
+						info.style.marginBottom = '4px';
+						info.textContent = `Враг #${idx+1}: (${enemy.x},${enemy.y}) | Сила: ${enemy.attack} | Здоровье: ${enemy.health}`;
+						enemyInfoDiv.appendChild(info);
+					});
+
+					// Проверка конца игры и победы
+					const gameOverDiv = document.getElementById('game-over');
+					const gameOverMsg = document.getElementById('game-over-message');
+					const gameOverBtn = document.getElementById('restart-btn');
+
+
+					if (this.victory) {
+						if (this.level+1 > this.maxLevel) {
+							gameOverMsg.textContent = 'Поздравляем! Вы прошли игру!';
+							gameOverBtn.textContent = 'Начать заново с 1 уровня';
+							this.level = 1;
+						}
+						else{
+							this.level += 1;
+							gameOverMsg.textContent = 'Поздравляем! Вы прошли ' + (this.level-1) + ' уровень!';
+							gameOverBtn.textContent = 'Переходим на ' + (this.level) +' уровень';
+							
+						}
+						gameOverDiv.style.display = 'block';
+						// удаляем старый обработчик, если был
+						if (this._keydownHandler) {
+							document.removeEventListener('keydown', this._keydownHandler);
+							this._keydownHandler = null;
+						}
+						// удаляем старый таймлапс, если был
+						if (this._enemyInterval) {
+							clearInterval(this._enemyInterval);
+						}
+						this.victory = false;
+
+					} else if (this.heartCount <= 0 || !this.hero.isAlive) {
+						gameOverMsg.textContent = 'Вы проиграли!';
+						this.level = 1;
+						gameOverBtn.textContent = 'Возвращаемся на ' + this.level +' уровень';
+						gameOverDiv.style.display = 'block';
+						// удаляем старый обработчик, если был
+						if (this._keydownHandler) {
+							document.removeEventListener('keydown', this._keydownHandler);
+							this._keydownHandler = null;
+						}
+						// удаляем старый таймлапс, если был
+						if (this._enemyInterval) {
+							clearInterval(this._enemyInterval);
+						}
+					} else {
+						return;
+						//gameOverDiv.style.display = 'none';
+					}
+				}
+
+				init() {
+					this.cols = 40;
+					this.rows = 24;
+					this.tileSize = 25;
+					this.tiles = [];
+					this.items = [];
+					this.hero = null;
+					this.enemies = [];
+					this.heartCount = 10;
+					this.swordCount = 2;
+					this.victory = false;
+					this._keydownHandlerAdded = false;
+
+					this.createEmptyTiles();
+					this.createRooms();
+					this.createVerticalTunnels();
+					this.createHorizontalTunnels();
+					if (!this.checkConnectedRooms()) {
+						this.connectRooms();
+					}
+					if (!this.checkConnectedRooms()) {
+						this.init();
+						return;
+					}
 					
+					this.placeItems();
+					this.render();
+
+					document.getElementById('game-over').style.display = 'none';
+
+					// удаляем старый обработчик, если был
+					if (this._keydownHandler) {
+						document.removeEventListener('keydown', this._keydownHandler);
+						this._keydownHandler = null;
+					}
+					// удаляем старый таймлапс, если был
+					if (this._enemyInterval) {
+						clearInterval(this._enemyInterval);
+					}
+
+					// Таймлапс для движения врагов
+					this._enemyInterval = setInterval(() => {
+						if (!this.hero || this.heartCount <= 0 || !this.hero.isAlive || this.victory) return;
+						this.moveEnemy();
+						this.attackByEnemy();
+						this.render();
+					},  this.dificulty[this.level-1][2]);//(6 - this.level) *200);
+
+					this._keydownHandler = (e) => {
+						if (!this.hero || this.heartCount <= 0 || !this.hero.isAlive || this.victory) return;
+						let dx = 0, dy = 0;
+						if (e.code === 'KeyW') {
+							dy = -1;
+							this.moveHero(dx, dy);
+							this.render();
+						} else if (e.code === 'KeyS') {
+							dy = 1;
+							this.moveHero(dx, dy);
+							this.render();
+						} else if (e.code === 'KeyA') {
+							dx = -1;
+							this.moveHero(dx, dy);
+							this.render();
+						} else if (e.code === 'KeyD') {
+							dx = 1;
+							this.moveHero(dx, dy);
+							this.render();
+						} else if (e.code === 'Space') {
+							this.attackByHero();
+							this.render();
+						} else return;
+					};
+
+					// Проверяем, что обработчик не добавлен
+					if (!this._keydownHandlerAdded) {
+						document.addEventListener('keydown', this._keydownHandler);
+						this._keydownHandlerAdded = true;
+					}
 				}
 			}
 
-			var game=new Game();
-			game.init();
+			var game = new Game();
+
+			// Показываем правила, скрываем поле до старта
+			document.getElementById('game-rules').style.display = 'block';
+			document.getElementById('game-interfase').style.display = 'none';
+
+			document.getElementById('start-game-btn').onclick = function() {
+				document.getElementById('game-rules').style.display = 'none';
+				document.getElementById('game-interfase').style.display = 'block';
+				const levelPanel = document.getElementById('levelPanel');
+				levelPanel.textContent = 'Игровое поле     (уровень ' + game.level +')';
+				game.init();
+			};
+
+			document.getElementById('restart-btn').onclick = function() {
+				const gameOverDiv = document.getElementById('game-over');
+				const levelPanel = document.getElementById('levelPanel');
+				levelPanel.textContent = 'Игровое поле     (уровень ' + game.level +')';
+				gameOverDiv.style.display = 'none';
+				game.init();
+			};
 		</script>
 	</body>
 </html>
